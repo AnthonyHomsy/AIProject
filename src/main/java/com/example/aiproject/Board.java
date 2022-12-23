@@ -296,5 +296,8 @@ public class Board {
         }
     }
 
+    public static Integer[][] getGoalState() {
+        return goalState;
+    }
 }
 
