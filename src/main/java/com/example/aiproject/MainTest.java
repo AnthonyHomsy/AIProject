@@ -15,6 +15,9 @@ public class MainTest {
             }
         }
         Board board = new Board(numbers);
+        H2_Manathann manathann = new H2_Manathann();
+
+        System.out.println(manathann.manathann(board));
 
     }
 
