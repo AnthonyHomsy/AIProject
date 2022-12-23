@@ -17,8 +17,8 @@ public class MainTest {
         Board board = new Board(numbers);
         H2_Manathann manathann = new H2_Manathann();
 
-        System.out.println(manathann.manathann(board));
-
+        AStarH1 h1 = new AStarH1(board);
+        System.out.println(h1.getId(numbers));
     }
 
 }

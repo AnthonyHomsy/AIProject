@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Board {
+    public String id;
+    public int heuristic;
+
     private Integer[][] board;
     private static Integer[][] goalState;
 
@@ -173,6 +176,7 @@ public class Board {
         return board[r][c];
     }
 
+
     private boolean isValidBoard() {
         if (board.length != board[0].length) {
             System.out.println("Board is not valid due to mismatch in lengths");
@@ -203,17 +207,6 @@ public class Board {
 
     public Integer[][] getBoard() {
         return board;
-    }
-
-    @Override
-    public int hashCode() {
-        String code = "";
-        for (int r = 0; r < size; r++) {
-            for (int c = 0; c < size; c++) {
-                code += board[r][c] + "";
-            }
-        }
-        return new BigInteger(code).hashCode();
     }
 
     public List<Direction> getPossibleMoves() {
