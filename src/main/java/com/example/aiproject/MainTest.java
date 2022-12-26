@@ -3,7 +3,7 @@ package com.example.aiproject;
 public class MainTest {
     public static void main(String[] args) {
         int n = 8;
-        Integer[] list = {5, 0, 2, 8, 6, 4, 7, 3, 1};
+        Integer[] list = {1, 2, 3, 0, 4, 6, 7, 5, 8};
         int size = ((int) Math.sqrt(n) + 1);
 
 
@@ -15,10 +15,8 @@ public class MainTest {
             }
         }
         Board board = new Board(numbers);
-        H2_Manathann manathann = new H2_Manathann();
-
         AStarH1 h1 = new AStarH1(board);
-        System.out.println(h1.getId(numbers));
+        h1.aStarSolver();
     }
 
 }

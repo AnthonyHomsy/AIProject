@@ -1,23 +1,17 @@
 package com.example.aiproject;
 
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class AStarH1 {
 
-    HashSet<String> set = new HashSet<String>();
-    PriorityQueue<Board> pq = new PriorityQueue<Board>();
+    public HashMap<Board, AStarBoardDummy> map;
+    private PriorityQueue<AStarBoardDummy> pq;
 
     private Board board;
     private Integer mat[][];
     private Integer finalMatrix[][];
     private int size;
 
-    //test
-    int row[] = {0,0,1,-1};
-    int col[] = {1,-1,0,0};
 
     public AStarH1(Board board) {
         this.board = board;
@@ -26,51 +20,59 @@ public class AStarH1 {
         this.size = mat.length;
     }
 
-    public String getId(Integer[][] matrice) {
-        String id = "";
-        for (int r = 0; r < size; r++) {
-            for (int c = 0; c < size; c++) {
-                id += matrice[r][c] + "";
-            }
-        }
-        return id;
-    }
-
-    public int misplacedTiles(Integer[][] matrice) {
-        int c = 0;
-        for (int i = 0; i < this.size; i++) {
-            for (int j = 0; j < this.size; j++) {
-                if (matrice[i][j] > 0 && matrice[i][j] != this.finalMatrix[i][j])
-                    c++;
-            }
-        }
-        return c;
-    }
-
-    boolean inLimit(int x, int y) {
-        if (x >= 0 && x < this.size && y >= 0 && y < this.size)
-            return true;
-        return false;
-    }
-
     public void aStarSolver() {
-        set = new HashSet<String>();
-        pq = new PriorityQueue<Board>();
-        this.board.heuristic = this.misplacedTiles(this.board.getBoard());
-        this.board.id = getId(this.board.getBoard());
-        pq.add(this.board);
-        set.add(this.board.id);
-
+        pq = new PriorityQueue<AStarBoardDummy>();
+        map = new HashMap<Board, AStarBoardDummy>();
+        AStarBoardDummy first = new AStarBoardDummy(null, this.board, null);
+        // Populate PriorityQueue and HashMap
+        pq.add(first);
+        map.put(first.getBoard(), first);
+        first.getBoard().print();
+        if (first.getBoard().isWon()) {
+            System.out.println("First board is already solved.");
+            return;
+        }
+        Stack<AStarBoardDummy> moves = new Stack<AStarBoardDummy>();
         while (!pq.isEmpty()) {
-            Board currentBoard = pq.poll();
-            Integer [][] currentMat = currentBoard.getBoard();
-            if (currentBoard.heuristic == 0) {
-                System.out.println("Fini");
-                return;
-            }
-          // else do the algo
+            AStarBoardDummy prev = (AStarBoardDummy) pq.poll();
 
+            ArrayList<Board.Direction> dirs = (ArrayList<Board.Direction>) prev.getBoard().getPossibleMoves();
+            for (int i = 0; i < dirs.size(); i++) {
+
+                AStarBoardDummy current = new AStarBoardDummy(prev, new Board(prev.getBoard().moveDirection(dirs.get(i))), dirs.get(i));
+
+                if (map.containsKey(current.getBoard())) {
+                    if (map.get(current.getBoard()).getWeight() > current.getWeight()) {
+                        map.remove(current.getBoard());
+                        map.put(current.getBoard(), current);
+                        pq.remove(current);
+                        pq.add(current);
+                    }
+                }
+
+                if (!current.getBoard().isWon()) {
+                    if (!map.containsKey(current.getBoard())) {
+                        pq.add(current);
+                        map.put(current.getBoard(), current);
+                    }
+                } else {
+                    AStarBoardDummy rover = new AStarBoardDummy(current.getPrevious(), current.getBoard(), current.getDirection());
+                    while (rover.getPrevious() != null) {
+                        moves.push(rover);
+                        rover = rover.getPrevious();
+                    }
+
+                    while (!(moves.isEmpty())) {
+                        AStarBoardDummy popped = moves.pop();
+                        System.out.println("Direction: " + popped.getDirection());
+                        popped.getBoard().print();
+                    }
+                    System.out.println("It works! Moves: " + current.getDist());
+                    return;
+                }
+            }
         }
     }
-
 }
+
+
