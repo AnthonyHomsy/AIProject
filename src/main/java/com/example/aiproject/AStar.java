@@ -1,8 +1,10 @@
 package com.example.aiproject;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.*;
 
-public class AStarH1 {
+public class AStar {
 
     public HashMap<Board, AStarBoardDummy> map;
     private PriorityQueue<AStarBoardDummy> pq;
@@ -13,14 +15,16 @@ public class AStarH1 {
     private int size;
 
 
-    public AStarH1(Board board) {
+    public AStar(Board board) {
         this.board = board;
         this.mat = board.getBoard();
         this.finalMatrix = board.getGoalState();
         this.size = mat.length;
     }
 
-    public void aStarSolver() {
+    public void aStarSolver(String h) {
+        long start = System.currentTimeMillis();
+
         pq = new PriorityQueue<AStarBoardDummy>();
         map = new HashMap<Board, AStarBoardDummy>();
         AStarBoardDummy first = new AStarBoardDummy(null, this.board, null);
@@ -28,7 +32,7 @@ public class AStarH1 {
         pq.add(first);
         map.put(first.getBoard(), first);
         first.getBoard().print();
-        if (first.getBoard().isWon()) {
+        if (first.getBoard().isSolved()) {
             System.out.println("First board is already solved.");
             return;
         }
@@ -40,6 +44,7 @@ public class AStarH1 {
             for (int i = 0; i < dirs.size(); i++) {
 
                 AStarBoardDummy current = new AStarBoardDummy(prev, new Board(prev.getBoard().moveDirection(dirs.get(i))), dirs.get(i));
+                current.h = h;
 
                 if (map.containsKey(current.getBoard())) {
                     if (map.get(current.getBoard()).getWeight() > current.getWeight()) {
@@ -50,11 +55,12 @@ public class AStarH1 {
                     }
                 }
 
-                if (!current.getBoard().isWon()) {
+                if (!current.getBoard().isSolved()) {
                     if (!map.containsKey(current.getBoard())) {
                         pq.add(current);
                         map.put(current.getBoard(), current);
                     }
+
                 } else {
                     AStarBoardDummy rover = new AStarBoardDummy(current.getPrevious(), current.getBoard(), current.getDirection());
                     while (rover.getPrevious() != null) {
@@ -67,7 +73,11 @@ public class AStarH1 {
                         System.out.println("Direction: " + popped.getDirection());
                         popped.getBoard().print();
                     }
-                    System.out.println("It works! Moves: " + current.getDist());
+
+                    long end = System.currentTimeMillis();
+                    NumberFormat formatter = new DecimalFormat("#0.00000");
+                    System.out.print("Execution time for "+h+" is " + formatter.format((end - start) / 1000d) + " seconds\n");
+                    System.out.println("Moves: " + current.getDist());
                     return;
                 }
             }

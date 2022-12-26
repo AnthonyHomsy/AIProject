@@ -5,7 +5,9 @@ public class AStarBoardDummy implements Comparable<AStarBoardDummy> {
     private Board.Direction dirToHere;
     private int distTo;
     private AStarBoardDummy previous;
-    private static Integer [][] goalState = Board.getGoalState();
+    private static Integer[][] goalState = Board.getGoalState();
+    public String h;
+
 
     public AStarBoardDummy(AStarBoardDummy previous, Board board, Board.Direction d) {
         this.board = board;
@@ -35,12 +37,17 @@ public class AStarBoardDummy implements Comparable<AStarBoardDummy> {
     }
 
     public int getWeight() {
-        return misplacedTiles(board) + getDist();
-        // return manathann(board) + getDist();
+        if (h == "h1") {
+            return misplacedTiles(board) + getDist();
+        } else if (h == "h2") {
+            return manathann(board) + getDist();
+        } else {
+            return getDist();
+        }
     }
 
     public int misplacedTiles(Board b) {
-        Integer [][] matrice=b.getBoard();
+        Integer[][] matrice = b.getBoard();
         int size = matrice.length;
         int c = 0;
         for (int i = 0; i < size; i++) {
@@ -51,17 +58,18 @@ public class AStarBoardDummy implements Comparable<AStarBoardDummy> {
         }
         return c;
     }
-    public int manathann (Board board){
 
-        Integer [][]mat=board.getBoard();
+    public int manathann(Board board) {
+
+        Integer[][] mat = board.getBoard();
         int count = 0;
         // Going across each value of our matrix
-        for (int r=0; r<mat.length; r++){
-            for(int c=0; c<mat.length; c++){
+        for (int r = 0; r < mat.length; r++) {
+            for (int c = 0; c < mat.length; c++) {
 
                 //We compare with each value of the goal state
-                for(int i=0; i< goalState.length; i++){
-                    for(int j=0; j< goalState.length; j++){
+                for (int i = 0; i < goalState.length; i++) {
+                    for (int j = 0; j < goalState.length; j++) {
 
                         //if they're the same, we compute manathann distance and increment counter
                         if (mat[r][c] == goalState[i][j]) {

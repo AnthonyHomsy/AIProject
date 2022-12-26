@@ -1,13 +1,10 @@
 package com.example.aiproject;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Board {
-    public String id;
-    public int heuristic;
 
     private Integer[][] board;
     private static Integer[][] goalState;
@@ -36,7 +33,7 @@ public class Board {
 
         if (!isValidBoard()) {
             try {
-                throw new InvalidBoardException("Invalid board passed to setupBoard()");
+                throw new InvalidBoardException("Error board validity");
             } catch (InvalidBoardException e) {
                 e.printStackTrace();
             }
@@ -55,7 +52,7 @@ public class Board {
 
         if (!foundZero) {
             try {
-                throw new InvalidBoardException("Invalid board configuration: zero not found.");
+                throw new InvalidBoardException("No zero found");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -110,7 +107,7 @@ public class Board {
                 c = c + 1;
                 break;
             default:
-                System.out.println("Please don't hit this");
+                System.out.println("x");
                 break;
         }
         try {
@@ -132,7 +129,7 @@ public class Board {
             case 1: //going up or down
                 if (cDiff == 0) {
                     newBoard.setSquare(rZero, cZero, getValueAtSquare(r, c));
-                    newBoard.setSquare(r, c, 0); // Guaranteed to be zero
+                    newBoard.setSquare(r, c, 0);
                 } else {
                     throw new InvalidMoveException("rDiff == " + rDiff + ", cDiff == " + cDiff);
                 }
@@ -140,7 +137,7 @@ public class Board {
             case 0: //going left or right
                 if (cDiff == 1) {
                     newBoard.setSquare(rZero, cZero, getValueAtSquare(r, c));
-                    newBoard.setSquare(r, c, 0); // Guaranteed to be zero
+                    newBoard.setSquare(r, c, 0);
                 } else {
                     throw new InvalidMoveException("rDiff == " + rDiff + ", cDiff == " + cDiff);
                 }
@@ -161,7 +158,7 @@ public class Board {
         }
     }
 
-    public boolean isWon() {
+    public boolean isSolved() {
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
                 if (board[r][c] != goalState[r][c]) {
