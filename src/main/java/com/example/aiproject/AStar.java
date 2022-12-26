@@ -6,7 +6,7 @@ import java.util.*;
 
 public class AStar {
 
-    public HashMap<Board, AStarBoardDummy> map;
+    public HashMap<String, AStarBoardDummy> map;
     private PriorityQueue<AStarBoardDummy> pq;
 
     private Board board;
@@ -26,12 +26,11 @@ public class AStar {
         long start = System.currentTimeMillis();
 
         pq = new PriorityQueue<AStarBoardDummy>();
-        map = new HashMap<Board, AStarBoardDummy>();
+        map = new HashMap<String, AStarBoardDummy>();
         AStarBoardDummy first = new AStarBoardDummy(null, this.board, null);
-        // Populate PriorityQueue and HashMap
         pq.add(first);
-        map.put(first.getBoard(), first);
-        first.getBoard().print();
+        map.put(first.getId(), first);
+
         if (first.getBoard().isSolved()) {
             System.out.println("First board is already solved.");
             return;
@@ -46,37 +45,26 @@ public class AStar {
                 AStarBoardDummy current = new AStarBoardDummy(prev, new Board(prev.getBoard().moveDirection(dirs.get(i))), dirs.get(i));
                 current.h = h;
 
-                if (map.containsKey(current.getBoard())) {
-                    if (map.get(current.getBoard()).getWeight() > current.getWeight()) {
-                        map.remove(current.getBoard());
-                        map.put(current.getBoard(), current);
+
+                if (map.containsKey(current.getId())) {
+                    if (map.get(current.getId()).getWeight() > current.getWeight()) {
+                        map.remove(current.getId());
+                        map.put(current.getId(), current);
                         pq.remove(current);
                         pq.add(current);
                     }
                 }
 
                 if (!current.getBoard().isSolved()) {
-                    if (!map.containsKey(current.getBoard())) {
+                    if (!map.containsKey(current.getId())) {
                         pq.add(current);
-                        map.put(current.getBoard(), current);
+                        map.put(current.getId(), current);
                     }
 
                 } else {
-                    AStarBoardDummy rover = new AStarBoardDummy(current.getPrevious(), current.getBoard(), current.getDirection());
-                    while (rover.getPrevious() != null) {
-                        moves.push(rover);
-                        rover = rover.getPrevious();
-                    }
-
-                    while (!(moves.isEmpty())) {
-                        AStarBoardDummy popped = moves.pop();
-                        System.out.println("Direction: " + popped.getDirection());
-                        popped.getBoard().print();
-                    }
-
                     long end = System.currentTimeMillis();
                     NumberFormat formatter = new DecimalFormat("#0.00000");
-                    System.out.print("Execution time for "+h+" is " + formatter.format((end - start) / 1000d) + " seconds\n");
+                    System.out.print("Execution time for " + h + " is " + formatter.format((end - start) / 1000d) + " seconds\n");
                     System.out.println("Moves: " + current.getDist());
                     return;
                 }

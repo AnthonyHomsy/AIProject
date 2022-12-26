@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Board {
 
+
     private Integer[][] board;
     private static Integer[][] goalState;
 
@@ -65,6 +66,7 @@ public class Board {
             }
         }
         goalState[size - 1][size - 1] = 0;
+
     }
 
     public int getSize() {

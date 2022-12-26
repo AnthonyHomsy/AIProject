@@ -2,8 +2,8 @@ package com.example.aiproject;
 
 public class MainTest {
     public static void main(String[] args) {
-        int n = 3;
-        Integer[] list = {0,3,2,1};
+        int n = 8;
+        Integer[] list = {5, 0, 2, 8, 6, 4, 7, 3, 1};
         int size = ((int) Math.sqrt(n) + 1);
 
 
@@ -15,8 +15,15 @@ public class MainTest {
             }
         }
         Board board = new Board(numbers);
-        AStar h1 = new AStar(board);
-        h1.aStarSolver("h2");
+        AStar a = new AStar(board);
+
+        System.out.println("Your board:");
+        board.print();
+
+        a.aStarSolver("h1");
+        a.aStarSolver("h2");
+        a.aStarSolver("bfs");
+
     }
 
 }

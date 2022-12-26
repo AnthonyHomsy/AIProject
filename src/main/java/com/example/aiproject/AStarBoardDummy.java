@@ -1,6 +1,16 @@
 package com.example.aiproject;
 
 public class AStarBoardDummy implements Comparable<AStarBoardDummy> {
+    public String getId() {
+        Integer[][] matrice = board.getBoard();
+        String id = "";
+        for (int r = 0; r < matrice.length; r++) {
+            for (int c = 0; c < matrice.length; c++) {
+                id += matrice[r][c] + "";
+            }
+        }
+        return id;
+    }
     private Board board;
     private Board.Direction dirToHere;
     private int distTo;
@@ -9,7 +19,9 @@ public class AStarBoardDummy implements Comparable<AStarBoardDummy> {
     public String h;
 
 
+
     public AStarBoardDummy(AStarBoardDummy previous, Board board, Board.Direction d) {
+
         this.board = board;
         if (previous != null) {
             this.previous = previous;
