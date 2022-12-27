@@ -16,13 +16,14 @@ public class MainTest {
         }
         Board board = new Board(numbers);
         AStar a = new AStar(board);
+        IDAStar ida = new IDAStar(board);
 
         System.out.println("Your board:");
         board.print();
 
         a.aStarSolver("h1");
         a.aStarSolver("h2");
-        a.aStarSolver("bfs");
+        ida.idaStarSolver("h2");
 
     }
 
