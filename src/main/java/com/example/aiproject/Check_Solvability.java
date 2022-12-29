@@ -6,37 +6,35 @@ public class Check_Solvability {
 is even.
  */
 
-    public static int inv_count(int [] arr_mat){
-        int count = 0;
-        for (int i=0; i< arr_mat.length; i++){
-            for(int j=i+1; j<arr_mat.length; j++){
-                if (arr_mat[i] > 0 && arr_mat[j]>0 && arr_mat[i]>arr_mat[j]){
-                    count++;
+    public static boolean isSolvable(Integer[] puzzle) {
+        int parity = 0;
+        int gridWidth = (int) Math.sqrt(puzzle.length);
+        int row = 0;
+        int blankRow = 0;
+
+        for (int i = 0; i < puzzle.length; i++) {
+            if (i % gridWidth == 0) {
+                row++;
+            }
+            if (puzzle[i] == 0) {
+                blankRow = row;
+                continue;
+            }
+            for (int j = i + 1; j < puzzle.length; j++) {
+                if (puzzle[i] > puzzle[j] && puzzle[j] != 0) {
+                    parity++;
                 }
             }
         }
-        return count;
-    }
 
-// Take our mat as param and convert it to array to use the count method
-    public static boolean Solvable (int [][] mat){
-        int arr_mat[];
-        arr_mat = new int[mat.length* mat.length];
-        boolean isSolvable;
-        int k=0;
-        for (int i=0; i<mat.length; i++){
-            for (int j=0; j< mat.length; j++){
-                arr_mat[k++] = mat[i][j];
+        if (gridWidth % 2 == 0) {
+            if (blankRow % 2 == 0) {
+                return parity % 2 == 0;
+            } else {
+                return parity % 2 != 0;
             }
+        } else {
+            return parity % 2 == 0;
         }
-
-        int count = inv_count(arr_mat);
-
-        if (count%2 == 0){
-            isSolvable = true;
-        }else {
-            isSolvable = false;
-        }
-        return isSolvable;
     }
 }

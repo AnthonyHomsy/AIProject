@@ -22,7 +22,7 @@ public class AStar {
         this.size = mat.length;
     }
 
-    public void aStarSolver(String h) {
+    public String aStarSolver(String h) {
         long start = System.currentTimeMillis();
 
         pq = new PriorityQueue<AStarBoardDummy>();
@@ -33,7 +33,7 @@ public class AStar {
 
         if (first.getBoard().isSolved()) {
             System.out.println("First board is already solved.");
-            return;
+            return h;
         }
         Stack<AStarBoardDummy> moves = new Stack<AStarBoardDummy>();
         while (!pq.isEmpty()) {
@@ -66,10 +66,11 @@ public class AStar {
                     NumberFormat formatter = new DecimalFormat("#0.00000");
                     System.out.print("Execution time for " + h + " is " + formatter.format((end - start) / 1000d) + " seconds\n");
                     System.out.println("Moves: " + current.getDist());
-                    return;
+                    return formatter.format((end - start) / 1000d);
                 }
             }
         }
+        return h;
     }
 }
 

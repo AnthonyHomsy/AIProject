@@ -1,204 +1,256 @@
 package com.example.aiproject;
 
+import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
-import java.lang.reflect.Array;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.Random;
 
-public class MainController  implements Initializable {
+public class MainController extends Application {
 
-    @FXML
-    private Button btn00;
-    @FXML
-    private Button btn01;
-    @FXML
-    private Button btn02;
-    @FXML
-    private Button btn03;
-    @FXML
-    private Button btn10;
-    @FXML
-    private Button btn11;
-    @FXML
-    private Button btn12;
-    @FXML
-    private Button btn13;
-    @FXML
-    private Button btn20;
-    @FXML
-    private Button btn21;
-    @FXML
-    private Button btn22;
-    @FXML
-    private Button btn23;
-    @FXML
-    private Button btn30;
-    @FXML
-    private Button btn31;
-    @FXML
-    private Button btn32;
-    @FXML
-    private Button btn33;
+    public TextField h1Result;
+    public TextField h2Result;
+    public TextField bfsResult;
+    public TextField ida1Result;
+    public TextField ida2Result;
+    public TextField inputN;
+    public GridPane gridButtons;
+    private Scene matrixScene;
 
-    int[][] currentState ;
-
+    private Integer[] list;
+    private boolean canSolve = false;
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
-
-            scramble();
-            printState();
-            displayGameBoard();
-
-
-    }
-
-    @FXML
-    protected void scramble() {
-
-        //Temporary array to scramble numbers
-        List<Integer> numbers = new ArrayList<Integer>();
-
-        //Storing numbers in Array
-        for (int i = 0 ; i<16; i++) {
-            numbers.add(i);
-        }
-        // Scrambling numbers
-        Collections.shuffle(numbers);
-
-        //Adding scrambled numbers to currentState
-        currentState = new int[4][4];
-        int counter = 0;
-        for(int i = 0;i<4;i++) {
-
-            int[] row = new int[4];
-
-            for (int j = 0;j<4;j++){
-                row[j]=numbers.get(counter);
-                counter++;
-            }
-            currentState[i] = row;
-        }
+    public void start(Stage stage) throws Exception {
+        GridPane root = FXMLLoader.load(getClass().getResource("main.fxml"));
+        Scene scene = new Scene(root, 500, 500);
+        stage.setTitle("Matrix");
+        stage.setScene(scene);
+        stage.show();
     }
 
 
-    //Print current  State in console;
-    public void printState() {
-
-        for (int i = 0; i < 4; i++) {
-            System.out.println(currentState[i].toString());
-            for (int j = 0;j<4;j++){
-                System.out.println(currentState[i][j]);
-            }
+    public static boolean isInteger(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 
-    //Display State on the board
-    public void displayGameBoard() {
-
-        //Setting text to the buttons, if value is 0 => display nothing in button
-        btn00.setText(currentState[0][0] != 0 ? currentState[0][0] + "" : "");
-        btn01.setText(currentState[0][1] != 0 ? currentState[0][1] + "" : "");
-        btn02.setText(currentState[0][2] != 0 ? currentState[0][2] + "" : "");
-        btn03.setText(currentState[0][3] != 0 ? currentState[0][3] + "" : "");
-        btn10.setText(currentState[1][0] != 0 ? currentState[1][0] + "" : "");
-        btn11.setText(currentState[1][1] != 0 ? currentState[1][1] + "" : "");
-        btn12.setText(currentState[1][2] != 0 ? currentState[1][2] + "" : "");
-        btn13.setText(currentState[1][3] != 0 ? currentState[1][3] + "" : "");
-        btn20.setText(currentState[2][0] != 0 ? currentState[2][0] + "" : "");
-        btn21.setText(currentState[2][1] != 0 ? currentState[2][1] + "" : "");
-        btn22.setText(currentState[2][2] != 0 ? currentState[2][2] + "" : "");
-        btn23.setText(currentState[2][3] != 0 ? currentState[2][3] + "" : "");
-        btn30.setText(currentState[3][0] != 0 ? currentState[3][0] + "" : "");
-        btn31.setText(currentState[3][1] != 0 ? currentState[3][1] + "" : "");
-        btn32.setText(currentState[3][2] != 0 ? currentState[3][2] + "" : "");
-        btn33.setText(currentState[3][3] != 0 ? currentState[3][3] + "" : "");
-
-
+    public static boolean checkGeneration(int d) {
+        double checkGeneration = Math.sqrt(d + 1);
+        if ((int) checkGeneration == checkGeneration) {
+            return true;
+        } else {
+            return false;
         }
+    }
 
+    public void generate(ActionEvent actionEvent) {
+        int input = Integer.parseInt(inputN.getText());
 
-    public void move(ActionEvent actionEvent) {
+        if (isInteger(inputN.getText())
+                && checkGeneration(input)
+        ) {
+            int n = input + 1;
+            Integer[] arr = new Integer[n];
+            for (int i = 0; i < n; i++) {
+                arr[i] = i;
+            }
 
-        System.out.println("Triggered");
+            boolean solvable = true;
+            do {
+                list = randomize(arr, n);
+                solvable = Check_Solvability.isSolvable(list);
+            } while (!solvable);
 
-        //Get Button Value
-        Button btn = (Button)actionEvent.getTarget();
-        System.out.println(btn.getText());
-        int value = Integer.parseInt(btn.getText());
+            int size = ((int) Math.sqrt(input) + 1);
 
-        System.out.println(value);
-
-
-
-        //Search position in current state
-        int iValue = -1,jValue = -1;
-
-        for (int i = 0;i<4;i++) {
-            for(int j = 0;j<4;j++){
-                if(currentState[i][j] == value){
-                    iValue = i;
-                    jValue = j;
+            int counter = 0;
+            for (int y = 0; y < size; y++) {
+                for (int x = 0; x < size; x++) {
+                    int value = list[counter];
+                    counter++;
+                    TextField tf = new TextField();
+                    tf.setPrefHeight(50);
+                    tf.setPrefWidth(50);
+                    tf.setAlignment(Pos.CENTER);
+                    tf.setEditable(false);
+                    tf.setText(String.valueOf(value));
+                    gridButtons.setRowIndex(tf, y);
+                    gridButtons.setColumnIndex(tf, x);
+                    gridButtons.getChildren().add(tf);
                 }
             }
+            h1Result.setText("");
+            h2Result.setText("");
+            bfsResult.setText("");
+            ida1Result.setText("");
+            ida2Result.setText("");
+            canSolve = true;
+            matrixScene = new Scene(gridButtons, 500, 500);
+            Stage stage = ((Stage) ((Button) (actionEvent.getSource())).getScene().getWindow());
+            stage.setScene(matrixScene);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Invalid N");
+            alert.show();
         }
+    }
 
-        System.out.println(iValue);
-        System.out.println(jValue);
-
-        if(iValue != -1 && jValue != -1){
-
-            int temp = 0;
-
-            //Check up
-                if( iValue !=0 && currentState[iValue - 1][jValue] == 0 ){
-
-                    temp = currentState[iValue][jValue];
-                    currentState[iValue][jValue] = 0;
-
-                    currentState[iValue - 1][jValue] = temp;
-                }
-            //Check down
-                else if(iValue !=3 && currentState[iValue + 1][jValue] == 0 ){
-
-                    temp = currentState[iValue][jValue];
-                    currentState[iValue][jValue] = 0;
-
-                    currentState[iValue + 1][jValue] = temp;
-                }
-
-            //Check left
-                else if(jValue !=0 && currentState[iValue][jValue - 1] == 0 ){
-
-                    temp = currentState[iValue][jValue];
-                    currentState[iValue][jValue] = 0;
-
-                    currentState[iValue][jValue - 1] = temp;
-
-                }
-
-            //Check right
-                else if(jValue !=3 && currentState[iValue][jValue + 1] == 0 ){
-
-                    temp = currentState[iValue][jValue];
-                    currentState[iValue][jValue] = 0;
-
-                    currentState[iValue][jValue + 1] = temp;
-                }
-
-            displayGameBoard();
-
+    private static Integer[] randomize(Integer arr[], int n) {
+        Random r = new Random();
+        for (int i = n - 1; i > 0; i--) {
+            int j = r.nextInt(i + 1);
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
         }
+        return arr;
+    }
 
+    public void solve(ActionEvent actionEvent) {
+        if (!canSolve) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Generate first");
+            alert.show();
+        } else {
+            int input = Integer.parseInt(inputN.getText());
+            int size = ((int) Math.sqrt(input) + 1);
+            Integer[][] numbers = new Integer[size][size];
+            int counter = 0;
+            for (int r = 0; r < size; r++) {
+                for (int c = 0; c < size; c++) {
+                    numbers[r][c] = list[counter++];
+                }
+            }
+            Board board = new Board(numbers);
+            AStar a = new AStar(board);
+            IDAStar ida = new IDAStar(board);
 
+            h1Result.setText(a.aStarSolver("h1"));
+            h2Result.setText(a.aStarSolver("h2"));
+            bfsResult.setText(a.aStarSolver("bfs"));
+            ida1Result.setText(ida.idaStarSolver("h1"));
+            ida2Result.setText(ida.idaStarSolver("h2"));
+        }
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    public void solve1(ActionEvent actionEvent) {
+        if (!canSolve) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Generate first");
+            alert.show();
+        } else {
+            int input = Integer.parseInt(inputN.getText());
+            int size = ((int) Math.sqrt(input) + 1);
+            Integer[][] numbers = new Integer[size][size];
+            int counter = 0;
+            for (int r = 0; r < size; r++) {
+                for (int c = 0; c < size; c++) {
+                    numbers[r][c] = list[counter++];
+                }
+            }
+            Board board = new Board(numbers);
+            AStar a = new AStar(board);
+            h1Result.setText(a.aStarSolver("h1"));
+        }
+    }
+
+    public void solve2(ActionEvent actionEvent) {
+        if (!canSolve) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Generate first");
+            alert.show();
+        } else {
+            int input = Integer.parseInt(inputN.getText());
+            int size = ((int) Math.sqrt(input) + 1);
+            Integer[][] numbers = new Integer[size][size];
+            int counter = 0;
+            for (int r = 0; r < size; r++) {
+                for (int c = 0; c < size; c++) {
+                    numbers[r][c] = list[counter++];
+                }
+            }
+            Board board = new Board(numbers);
+            AStar a = new AStar(board);
+            h2Result.setText(a.aStarSolver("h2"));
+        }
+    }
+
+    public void solve3(ActionEvent actionEvent) {
+        if (!canSolve) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Generate first");
+            alert.show();
+        } else {
+            int input = Integer.parseInt(inputN.getText());
+            int size = ((int) Math.sqrt(input) + 1);
+            Integer[][] numbers = new Integer[size][size];
+            int counter = 0;
+            for (int r = 0; r < size; r++) {
+                for (int c = 0; c < size; c++) {
+                    numbers[r][c] = list[counter++];
+                }
+            }
+            Board board = new Board(numbers);
+            AStar a = new AStar(board);
+            bfsResult.setText(a.aStarSolver("bfs"));
+        }
+    }
+
+    public void solve4(ActionEvent actionEvent) {
+        if (!canSolve) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Generate first");
+            alert.show();
+        } else {
+            int input = Integer.parseInt(inputN.getText());
+            int size = ((int) Math.sqrt(input) + 1);
+            Integer[][] numbers = new Integer[size][size];
+            int counter = 0;
+            for (int r = 0; r < size; r++) {
+                for (int c = 0; c < size; c++) {
+                    numbers[r][c] = list[counter++];
+                }
+            }
+            Board board = new Board(numbers);
+            IDAStar ida = new IDAStar(board);
+            ida1Result.setText(ida.idaStarSolver("h1"));
+        }
+    }
+
+    public void solve5(ActionEvent actionEvent) {
+        if (!canSolve) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Generate first");
+            alert.show();
+        } else {
+            int input = Integer.parseInt(inputN.getText());
+            int size = ((int) Math.sqrt(input) + 1);
+            Integer[][] numbers = new Integer[size][size];
+            int counter = 0;
+            for (int r = 0; r < size; r++) {
+                for (int c = 0; c < size; c++) {
+                    numbers[r][c] = list[counter++];
+                }
+            }
+            Board board = new Board(numbers);
+            IDAStar ida = new IDAStar(board);
+            ida2Result.setText(ida.idaStarSolver("h2"));
+        }
     }
 }

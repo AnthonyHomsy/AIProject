@@ -5,7 +5,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
-import java.util.Stack;
 
 public class IDAStar {
 
@@ -22,7 +21,7 @@ public class IDAStar {
 
     }
 
-    public void idaStarSolver(String h) {
+    public String idaStarSolver(String h) {
         long start = System.currentTimeMillis();
         //
         AStarBoardDummy first = new AStarBoardDummy(null, this.board, null);
@@ -45,11 +44,12 @@ public class IDAStar {
                 System.out.println("Moves : " + solutionState.getDist());
 
                 //Stop the Loop
-                break;
+                return formatter.format((end - start) / 1000d);
             }
             if (temp == Integer.MAX_VALUE) {
                 // No result Found
                 System.out.println("Time limit exceeded");
+                return "Time limit exceeded";
             }
 
             // No solution found at this threshold :
@@ -60,7 +60,7 @@ public class IDAStar {
     }
 
 
-    public int search(AStarBoardDummy current,String h) {
+    public int search(AStarBoardDummy current, String h) {
 
         if (current.getWeight() > threshold) {
             //If weight is bigger than threshold : Do not explore -> return weight to re-evaluate threshold
@@ -75,7 +75,7 @@ public class IDAStar {
         }
 
 
-        Integer min =Integer.MAX_VALUE;
+        Integer min = Integer.MAX_VALUE;
 
         //Iterate through all possible moves
         ArrayList<Board.Direction> dirs = (ArrayList<Board.Direction>) current.getBoard().getPossibleMoves();
@@ -90,14 +90,14 @@ public class IDAStar {
 //            System.out.println("Current examined node weight : "+next.getWeight());
 //            System.out.println("-------------------------");
 
-           int temp = search(next,h);
+            int temp = search(next, h);
 
-           if (temp == -1){
+            if (temp == -1) {
 
-               return -1;
-           }
-           //Setting min if weight is the lowest
-            if(temp<min){
+                return -1;
+            }
+            //Setting min if weight is the lowest
+            if (temp < min) {
                 min = temp;
             }
         }
