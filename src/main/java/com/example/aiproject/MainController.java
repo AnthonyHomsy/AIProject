@@ -73,6 +73,7 @@ public class MainController extends Application {
             boolean solvable = true;
             do {
                 list = randomize(arr, n);
+                // list = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,16,17,18,19,20,21,0,22,23 ,24};
                 solvable = Check_Solvability.isSolvable(list);
             } while (!solvable);
 

@@ -98,6 +98,8 @@ public class AStarBoardDummy implements Comparable<AStarBoardDummy> {
         return count;
     }
 
+    // we are implementing and using comparable to compare the weight in the priority queue
+
     @Override
     public boolean equals(Object other) {
         if (other instanceof AStarBoardDummy) {
