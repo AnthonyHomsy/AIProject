@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Board {
-
-
     private Integer[][] board;
     private static Integer[][] goalState;
 
@@ -25,40 +23,24 @@ public class Board {
     public Board(Integer[][] board) {
         super();
         this.board = board;
-        setupBoard();
+        createBoard();
     }
 
-    private void setupBoard() {
+    private void createBoard() {
         size = board.length;
         goalState = new Integer[size][size];
 
-        if (!isValidBoard()) {
-            try {
-                throw new InvalidBoardException("Error board validity");
-            } catch (InvalidBoardException e) {
-                e.printStackTrace();
-            }
-        }
-
-        boolean foundZero = false;
+        // locate the 0 in our board
         for (int r = 0; r < board.length; r++) {
             for (int c = 0; c < board[0].length; c++) {
                 if (board[r][c] == 0) {
-                    foundZero = true;
                     rZero = r;
                     cZero = c;
                 }
             }
         }
 
-        if (!foundZero) {
-            try {
-                throw new InvalidBoardException("No zero found");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
+        // create the final state
         int counter = 1;
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
@@ -73,6 +55,7 @@ public class Board {
         return size;
     }
 
+    // return a copy of our board
     public Board copyBoard() {
         Integer[][] copy = new Integer[size][size];
         for (int r = 0; r < Board.size; r++) {
@@ -83,6 +66,7 @@ public class Board {
         return new Board(copy);
     }
 
+    // set value to a certain square
     public void setSquare(int r, int c, int value) {
         if (value == 0) {
             rZero = r;
@@ -91,7 +75,8 @@ public class Board {
         board[r][c] = value;
     }
 
-    public Integer[][] moveDirection(Direction d) {
+    // give in parameter the direction and move the 0 to that direction
+    public Integer[][] moveToCertainDirection(Direction d) {
         Board newBoard = copyBoard();
         int r = this.rZero;
         int c = this.cZero;
@@ -113,44 +98,46 @@ public class Board {
                 break;
         }
         try {
-            newBoard.board = newBoard.swapSquare(r, c);
-        } catch (InvalidMoveException e) {
+            newBoard.board = newBoard.switchSquare(r, c);
+        } catch (ExceptionErrorMove e) {
             e.printStackTrace();
         }
         return newBoard.getBoard();
     }
 
-    public Integer[][] swapSquare(int r, int c) throws InvalidMoveException {
+    // switch to squares
+    public Integer[][] switchSquare(int r, int c) throws ExceptionErrorMove {
         Board newBoard = copyBoard();
         int rDiff = Math.abs(r - rZero);
         int cDiff = Math.abs(c - cZero);
         if (rDiff > 1 || cDiff > 1) {
-            throw new InvalidMoveException("Tried to swap with non-adjacent square");
+            throw new ExceptionErrorMove("Error");
         }
         switch (rDiff) {
-            case 1: //going up or down
+            case 1: //up ou down
                 if (cDiff == 0) {
-                    newBoard.setSquare(rZero, cZero, getValueAtSquare(r, c));
+                    newBoard.setSquare(rZero, cZero, getValueOfaSquare(r, c));
                     newBoard.setSquare(r, c, 0);
                 } else {
-                    throw new InvalidMoveException("rDiff == " + rDiff + ", cDiff == " + cDiff);
+                    throw new ExceptionErrorMove("rDiff == " + rDiff + ", cDiff == " + cDiff);
                 }
                 break;
-            case 0: //going left or right
+            case 0: //droite ou gauche
                 if (cDiff == 1) {
-                    newBoard.setSquare(rZero, cZero, getValueAtSquare(r, c));
+                    newBoard.setSquare(rZero, cZero, getValueOfaSquare(r, c));
                     newBoard.setSquare(r, c, 0);
                 } else {
-                    throw new InvalidMoveException("rDiff == " + rDiff + ", cDiff == " + cDiff);
+                    throw new ExceptionErrorMove("rDiff == " + rDiff + ", cDiff == " + cDiff);
                 }
             default:
                 if (rDiff == 0 && cDiff == 0) {
-                    throw new InvalidMoveException("Tried to swap 0 with 0");
+                    throw new ExceptionErrorMove("Error switching 0 with 0");
                 }
         }
         return newBoard.getBoard();
     }
 
+    // useful in the terminal to visualise the board
     public void print() {
         for (int r = 0; r < board.length; r++) {
             for (int c = 0; c < board[0].length; c++) {
@@ -160,6 +147,7 @@ public class Board {
         }
     }
 
+    // check if our board reached the final state
     public boolean isSolved() {
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
@@ -171,89 +159,61 @@ public class Board {
         return true;
     }
 
-    private int getValueAtSquare(int r, int c) {
+    private int getValueOfaSquare(int r, int c) {
         return board[r][c];
-    }
-
-
-    private boolean isValidBoard() {
-        if (board.length != board[0].length) {
-            System.out.println("Board is not valid due to mismatch in lengths");
-
-        }
-        boolean flag = false;
-
-        for (int i = 0; i < size * size - 1; i++) {
-            flag = false;
-
-            for (int r = 0; r < size; r++) {
-                for (int c = 0; c < size; c++) {
-
-                    if (board[r][c] == i) {
-                        flag = true;
-                        r = c = size; // breaks out of both loops
-                    }
-                }
-
-            }
-            if (flag == false) { // didn't find that number
-                System.out.println("Board is not valid due to duplicate input value.");
-                this.print();
-            }
-        }
-        return true;
     }
 
     public Integer[][] getBoard() {
         return board;
     }
 
-    public List<Direction> getPossibleMoves() {
+    // get possible directions for each 0 position
+    public List<Direction> getMoves() {
         int cZero = this.getcZero();
         int rZero = this.getrZero();
         List<Direction> result = new ArrayList<>();
-        if (cZero == 0) { // left column
-            if (rZero == 0) { //top left corner
+        if (cZero == 0) {
+            if (rZero == 0) {
                 result.add(Direction.DOWN);
                 result.add(Direction.RIGHT);
                 return result;
-            } else if (rZero == this.getSize() - 1) { // bottom left corner
+            } else if (rZero == this.getSize() - 1) {
                 result.add(Direction.UP);
                 result.add(Direction.RIGHT);
                 return result;
-            } else { // middle rows, left column
+            } else {
                 result.add(Direction.UP);
                 result.add(Direction.DOWN);
                 result.add(Direction.RIGHT);
                 return result;
             }
-        } else if (cZero == this.getSize() - 1) { // right column
-            if (rZero == 0) { // top right corner
+        } else if (cZero == this.getSize() - 1) {
+            if (rZero == 0) {
                 result.add(Direction.DOWN);
                 result.add(Direction.LEFT);
                 return result;
-            } else if (rZero == this.getSize() - 1) { //bottom right corner
+            } else if (rZero == this.getSize() - 1) {
                 result.add(Direction.UP);
                 result.add(Direction.LEFT);
                 return result;
-            } else { // middle rows of right column
+            } else {
                 result.add(Direction.UP);
                 result.add(Direction.DOWN);
                 result.add(Direction.LEFT);
                 return result;
             }
-        } else { // not left or right
+        } else {
             if (rZero == 0) { // top
                 result.add(Direction.DOWN);
                 result.add(Direction.LEFT);
                 result.add(Direction.RIGHT);
                 return result;
-            } else if (rZero == this.getSize() - 1) { // bottom
+            } else if (rZero == this.getSize() - 1) {
                 result.add(Direction.UP);
                 result.add(Direction.LEFT);
                 result.add(Direction.RIGHT);
                 return result;
-            } else { // all possible
+            } else { // tout est possible
                 result.add(Direction.UP);
                 result.add(Direction.DOWN);
                 result.add(Direction.LEFT);
@@ -263,7 +223,7 @@ public class Board {
         }
     }
 
-
+    // enum for the possible directions
     public enum Direction {
         UP, DOWN, LEFT, RIGHT;
     }
@@ -276,14 +236,8 @@ public class Board {
         return false;
     }
 
-    class InvalidMoveException extends Exception {
-        public InvalidMoveException(String message) {
-            super(message);
-        }
-    }
-
-    class InvalidBoardException extends Exception {
-        public InvalidBoardException(String message) {
+    class ExceptionErrorMove extends Exception {
+        public ExceptionErrorMove(String message) {
             super(message);
         }
     }
@@ -291,5 +245,6 @@ public class Board {
     public static Integer[][] getGoalState() {
         return goalState;
     }
+
 }
 

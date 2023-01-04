@@ -15,10 +15,8 @@ public class IDAStar {
     private AStarBoardDummy solutionState;
     private int threshold;
 
-
     public IDAStar(Board board) {
         this.board = board;
-
     }
 
     public String idaStarSolver(String h) {
@@ -32,12 +30,9 @@ public class IDAStar {
 
         //Start of iterations
         while (true) {
-
-
             int temp = search(first, h);
             if (temp == -1) {
                 // value of -1 -> Found
-
                 long end = System.currentTimeMillis();
                 NumberFormat formatter = new DecimalFormat("#0.00000");
                 System.out.print("Execution time for IDA* with " + h + " is " + formatter.format((end - start) / 1000d) + " seconds\n");
@@ -51,17 +46,13 @@ public class IDAStar {
                 System.out.println("Time limit exceeded");
                 return "Time limit exceeded";
             }
-
             // No solution found at this threshold :
             //Setting new Threshold for next iteration
             threshold = temp;
-
         }
     }
 
-
     public int search(AStarBoardDummy current, String h) {
-
         if (current.getWeight() > threshold) {
             //If weight is bigger than threshold : Do not explore -> return weight to re-evaluate threshold
             return current.getWeight();
@@ -70,30 +61,27 @@ public class IDAStar {
         if (current.getBoard().isSolved()) {
             //If found return value -1
             solutionState = current;
-
             return -1;
         }
-
 
         Integer min = Integer.MAX_VALUE;
 
         //Iterate through all possible moves
-        ArrayList<Board.Direction> dirs = (ArrayList<Board.Direction>) current.getBoard().getPossibleMoves();
+        ArrayList<Board.Direction> dirs = (ArrayList<Board.Direction>) current.getBoard().getMoves();
         for (int i = 0; i < dirs.size(); i++) {
 
-            AStarBoardDummy next = new AStarBoardDummy(current, new Board(current.getBoard().moveDirection(dirs.get(i))), dirs.get(i));
+            AStarBoardDummy next = new AStarBoardDummy(current, new Board(current.getBoard().moveToCertainDirection(dirs.get(i))), dirs.get(i));
             next.h = h;
 
-            //This code helps to keep progress
-//            System.out.println("-------------------------");
-//            System.out.println("Current Threshold : "+threshold);
-//            System.out.println("Current examined node weight : "+next.getWeight());
-//            System.out.println("-------------------------");
-
+            /* This code helps to keep progress
+            System.out.println("-------------------------");
+            System.out.println("Current Threshold : "+threshold);
+            System.out.println("Current examined node weight : "+next.getWeight());
+            System.out.println("-------------------------");
+            */
             int temp = search(next, h);
 
             if (temp == -1) {
-
                 return -1;
             }
             //Setting min if weight is the lowest
@@ -103,6 +91,5 @@ public class IDAStar {
         }
         //returning the lowest weight
         return min;
-
     }
 }

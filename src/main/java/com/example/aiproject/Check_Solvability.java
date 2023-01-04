@@ -2,7 +2,7 @@ package com.example.aiproject;
 
 public class Check_Solvability {
 
-/* To check if a n-puzzle is solvalbe, we need to verify if the number of inversions in the puzzle
+/* To check if a n-puzzle is solvable, we need to verify if the number of inversions in the puzzle
 is even.
  */
 

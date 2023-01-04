@@ -1,6 +1,14 @@
 package com.example.aiproject;
 
 public class AStarBoardDummy implements Comparable<AStarBoardDummy> {
+    private Board board;
+    private Board.Direction direction;
+    private int distanceTo;
+    private AStarBoardDummy previous;
+    private static Integer[][] goalState = Board.getGoalState();
+    public String h;
+
+    // create a unique id for each board
     public String getId() {
         Integer[][] matrice = board.getBoard();
         String id = "";
@@ -11,24 +19,15 @@ public class AStarBoardDummy implements Comparable<AStarBoardDummy> {
         }
         return id;
     }
-    private Board board;
-    private Board.Direction dirToHere;
-    private int distTo;
-    private AStarBoardDummy previous;
-    private static Integer[][] goalState = Board.getGoalState();
-    public String h;
-
-
 
     public AStarBoardDummy(AStarBoardDummy previous, Board board, Board.Direction d) {
-
         this.board = board;
         if (previous != null) {
             this.previous = previous;
-            this.distTo = previous.getDist() + 1;
-            this.dirToHere = d;
+            this.distanceTo = previous.getDist() + 1;
+            this.direction = d;
         } else {
-            this.distTo = 0;
+            this.distanceTo = 0;
         }
     }
 
@@ -37,11 +36,11 @@ public class AStarBoardDummy implements Comparable<AStarBoardDummy> {
     }
 
     public int getDist() {
-        return distTo;
+        return distanceTo;
     }
 
     public Board.Direction getDirection() {
-        return this.dirToHere;
+        return this.direction;
     }
 
     public AStarBoardDummy getPrevious() {
@@ -49,15 +48,19 @@ public class AStarBoardDummy implements Comparable<AStarBoardDummy> {
     }
 
     public int getWeight() {
+        // if we are using h1 we call misplacedTitles to get the heuristic and add the distance to it
         if (h == "h1") {
             return misplacedTiles(board) + getDist();
+            // if we are using h2 we call manathann to get the heuristic and add the distance to it
         } else if (h == "h2") {
             return manathann(board) + getDist();
+            // we only return distance in BFS we don't use heuristic
         } else {
             return getDist();
         }
     }
 
+    // function that returns the heuristic h1 of each misplaced square
     public int misplacedTiles(Board b) {
         Integer[][] matrice = b.getBoard();
         int size = matrice.length;
@@ -71,8 +74,8 @@ public class AStarBoardDummy implements Comparable<AStarBoardDummy> {
         return c;
     }
 
+    // function that returns the heuristic h2 while using the manathann distance
     public int manathann(Board board) {
-
         Integer[][] mat = board.getBoard();
         int count = 0;
         // Going across each value of our matrix
@@ -109,4 +112,5 @@ public class AStarBoardDummy implements Comparable<AStarBoardDummy> {
         int b = o.getWeight();
         return a - b;
     }
+
 }

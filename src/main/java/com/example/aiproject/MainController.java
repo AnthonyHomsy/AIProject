@@ -36,7 +36,7 @@ public class MainController extends Application {
         stage.show();
     }
 
-
+    // check string is an integer
     public static boolean isInteger(String str) {
         try {
             Integer.parseInt(str);
@@ -46,6 +46,7 @@ public class MainController extends Application {
         }
     }
 
+    // check if number given can be generated
     public static boolean checkGeneration(int d) {
         double checkGeneration = Math.sqrt(d + 1);
         if ((int) checkGeneration == checkGeneration) {
@@ -55,6 +56,7 @@ public class MainController extends Application {
         }
     }
 
+    // display generated board
     public void generate(ActionEvent actionEvent) {
         int input = Integer.parseInt(inputN.getText());
 
@@ -67,6 +69,7 @@ public class MainController extends Application {
                 arr[i] = i;
             }
 
+            // generate solvable board
             boolean solvable = true;
             do {
                 list = randomize(arr, n);
@@ -107,6 +110,7 @@ public class MainController extends Application {
         }
     }
 
+    // shuffle the board
     private static Integer[] randomize(Integer arr[], int n) {
         Random r = new Random();
         for (int i = n - 1; i > 0; i--) {
@@ -118,6 +122,7 @@ public class MainController extends Application {
         return arr;
     }
 
+    // call all methods and display values
     public void solve(ActionEvent actionEvent) {
         if (!canSolve) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -149,6 +154,7 @@ public class MainController extends Application {
         launch(args);
     }
 
+    // solve h1
     public void solve1(ActionEvent actionEvent) {
         if (!canSolve) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -170,6 +176,7 @@ public class MainController extends Application {
         }
     }
 
+    // solve h2
     public void solve2(ActionEvent actionEvent) {
         if (!canSolve) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -191,6 +198,7 @@ public class MainController extends Application {
         }
     }
 
+    // solve BFS
     public void solve3(ActionEvent actionEvent) {
         if (!canSolve) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -212,6 +220,7 @@ public class MainController extends Application {
         }
     }
 
+    // solve ida* with h1
     public void solve4(ActionEvent actionEvent) {
         if (!canSolve) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -233,6 +242,7 @@ public class MainController extends Application {
         }
     }
 
+    // solve ida* with h2
     public void solve5(ActionEvent actionEvent) {
         if (!canSolve) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
